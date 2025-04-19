@@ -1,0 +1,3 @@
+[submodule "reference_packages/scikit-learn"]
+	path = reference_packages/scikit-learn
+	url = git@github.com:scikit-learn/scikit-learn.git
