@@ -26,7 +26,7 @@ license = "MIT"
 license-files = ["LICENSE"]
 requires-python = ">=3.9"
 dependencies = [
-    "scikit-learn>=1.6.1,<2",
+    "scikit-learn==1.6.1",
     "numpydoc>=1.8.0,<2",
     "joblib>=1.4.2,<2",
     "langchain>=0.3.23,<0.4",
@@ -36,6 +36,29 @@ dependencies = [
 ]
 [dependency-groups]
 tests = ["pytest-xdist"]
+preamble = [
+    "numpy",
+    "scipy",
+    "scikit-learn==1.6.1",
+    "sphinx",
+    "numpydoc",
+    "sphinx-gallery",
+    "matplotlib",
+    "pandas",
+    "pillow",
+    "plotly",
+    "polars",
+    "pooch",
+    "scikit-image",
+    "seaborn",
+    "sphinx-copybutton",
+    "sphinx-design",
+    "sphinx-remove-toctrees",
+    "sphinxcontrib-sass",
+    "sphinxext-opengraph",
+    "sphinx-prompt",
+    "pydata-sphinx-theme",
+]
 
 [project.urls]
 Homepage = "https://github.com/glemaitre/vectordb_builder"
@@ -52,11 +75,15 @@ python = ">=3.9"
 [tool.pixi.pypi-dependencies]
 vectordb_builder = { path = ".", editable = true }
 
+[tool.pixi.feature.preamble.tasks]
+build-doc-sklearn = { cmd = "make html-noplot", cwd = "reference_packages/scikit-learn/doc" }
+
 [tool.pixi.feature.tests.tasks]
 tests = "pytest -vsl src"
 
 [tool.pixi.environments]
 default = { solve-group = "default" }
+preamble = { features = ["preamble"], solve-group = "default" }
 tests = { features = ["tests"], solve-group = "default" }
 
 [tool.ruff]
