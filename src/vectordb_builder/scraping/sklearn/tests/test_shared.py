@@ -2,8 +2,8 @@ from pathlib import Path
 
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
-from ragger_duck.scraping import UserGuideDocExtractor
-from ragger_duck.scraping._shared import _chunk_document
+from vectordb_builder.scraping.sklearn import UserGuideDocExtractor
+from vectordb_builder.scraping.sklearn._shared import _chunk_document
 
 TEST_DATA_PATH = Path(__file__).parent / "data" / "user_guide_doc"
 

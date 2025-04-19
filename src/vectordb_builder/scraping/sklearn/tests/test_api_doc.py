@@ -4,9 +4,10 @@ import importlib
 from pathlib import Path
 
 import pytest
+from sklearn.utils import get_tags
 
-from ragger_duck.scraping import APINumPyDocExtractor
-from ragger_duck.scraping._api_doc import _extract_function_doc_numpydoc
+from vectordb_builder.scraping.sklearn import APINumPyDocExtractor
+from vectordb_builder.scraping.sklearn._api_doc import _extract_function_doc_numpydoc
 
 API_TEST_FOLDER = Path(__file__).parent / "data" / "api_doc"
 NUMPYDOC_SCRAPING_TEST_FOLDER = Path(__file__).parent / "data" / "numpydoc_docscrape"
@@ -26,7 +27,9 @@ def test_api_numpydoc_extractor():
         assert isinstance(output["text"], str)
         assert output["source"] in possible_source
 
-    assert extractor._get_tags()["stateless"]
+    tags = get_tags(extractor)
+    assert tags.input_tags.string
+    assert tags.requires_fit is False
 
 
 def test__extract_function_doc_numpydoc_function():

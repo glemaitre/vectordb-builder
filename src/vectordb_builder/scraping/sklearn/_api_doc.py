@@ -184,7 +184,7 @@ def _extract_function_doc_numpydoc(function, import_name, html_source):
     return extracted_doc
 
 
-class APINumPyDocExtractor(BaseEstimator, TransformerMixin):
+class APINumPyDocExtractor(TransformerMixin, BaseEstimator):
     """Extract text from the API documentation using `numpydoc`.
 
     To discover the classes and functions, one should provide the path containing the
@@ -295,5 +295,8 @@ class APINumPyDocExtractor(BaseEstimator, TransformerMixin):
                         output += extracted_doc
         return output
 
-    def _more_tags(self):
-        return {"X_types": ["string"], "stateless": True}
+    def __sklearn_tags__(self):
+        tags = super().__sklearn_tags__()
+        tags.input_tags.string = True
+        tags.requires_fit = False
+        return tags

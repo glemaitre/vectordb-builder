@@ -135,7 +135,7 @@ def _extract_single_example(file_path):
         ]
 
 
-class GalleryExampleExtractor(BaseEstimator, TransformerMixin):
+class GalleryExampleExtractor(TransformerMixin, BaseEstimator):
     """Extract text from the examples of the gallery.
 
     Parameters
@@ -237,5 +237,8 @@ class GalleryExampleExtractor(BaseEstimator, TransformerMixin):
             )
         return output
 
-    def _more_tags(self):
-        return {"X_types": ["string"], "stateless": True}
+    def __sklearn_tags__(self):
+        tags = super().__sklearn_tags__()
+        tags.input_tags.string = True
+        tags.requires_fit = False
+        return tags

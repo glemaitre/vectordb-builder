@@ -1,9 +1,10 @@
 from pathlib import Path
 
 import pytest
+from sklearn.utils import get_tags
 
-from ragger_duck.scraping import UserGuideDocExtractor
-from ragger_duck.scraping._user_guide import (
+from vectordb_builder.scraping.sklearn import UserGuideDocExtractor
+from vectordb_builder.scraping.sklearn._user_guide import (
     _extract_user_guide_doc,
     extract_user_guide_doc_from_single_file,
 )
@@ -28,9 +29,9 @@ def test_user_guide_doc_extractor(chunk_size, n_jobs):
             assert len(chunk["text"]) <= chunk_size
         assert chunk["source"] in possible_source
 
-    tags = extractor._get_tags()
-    assert tags["X_types"] == ["string"]
-    assert tags["stateless"] is True
+    tags = get_tags(extractor)
+    assert tags.input_tags.string
+    assert tags.requires_fit is False
 
 
 def test_user_guide_doc_extractor_black_list():

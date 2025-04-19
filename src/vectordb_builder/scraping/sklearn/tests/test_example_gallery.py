@@ -1,8 +1,9 @@
 from pathlib import Path
 
 import pytest
+from sklearn.utils import get_tags
 
-from ragger_duck.scraping import GalleryExampleExtractor
+from vectordb_builder.scraping.sklearn import GalleryExampleExtractor
 
 EXAMPLES_TEST_FOLDER = Path(__file__).parent / "data" / "gallery" / "examples"
 EXAMPLE_NAMES = ["plot_tree_regression", "plot_linear_model_coefficient_interpretation"]
@@ -28,9 +29,9 @@ def test_gallery_example_extractor(chunk_size, n_jobs):
         # Without chunking, we should chunk at the section level
         assert len(output_extract) == 14
 
-    tags = extractor._get_tags()
-    assert tags["X_types"] == ["string"]
-    assert tags["stateless"] is True
+    tags = get_tags(extractor)
+    assert tags.input_tags.string
+    assert tags.requires_fit is False
 
 
 def test_gallery_example_extractor_no_extraction_error():

@@ -124,7 +124,7 @@ def _extract_user_guide_doc(user_guide_doc_folder, black_listed_folders):
     return result
 
 
-class UserGuideDocExtractor(BaseEstimator, TransformerMixin):
+class UserGuideDocExtractor(TransformerMixin, BaseEstimator):
     """Extract text from the User Guide documentation.
 
     This function can process classes and functions.
@@ -229,5 +229,8 @@ class UserGuideDocExtractor(BaseEstimator, TransformerMixin):
             )
         return output
 
-    def _more_tags(self):
-        return {"X_types": ["string"], "stateless": True}
+    def __sklearn_tags__(self):
+        tags = super().__sklearn_tags__()
+        tags.input_tags.string = True
+        tags.requires_fit = False
+        return tags
