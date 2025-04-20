@@ -59,6 +59,9 @@ preamble = [
     "sphinx-prompt",
     "pydata-sphinx-theme",
 ]
+dev = [
+    "ipykernel",
+]
 
 [project.urls]
 Homepage = "https://github.com/glemaitre/vectordb_builder"
@@ -85,6 +88,7 @@ tests = "pytest -vsl src"
 default = { solve-group = "default" }
 preamble = { features = ["preamble"], solve-group = "default" }
 tests = { features = ["tests"], solve-group = "default" }
+dev = { features = ["dev", "preamble", "tests"], solve-group = "default" }
 
 [tool.ruff]
 line-length = 88
