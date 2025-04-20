@@ -74,3 +74,5 @@ index_data/
 # pixi environments
 .pixi
 *.egg-info
+scratch/
+src/vectordb_builder/embedding/tests/data/
