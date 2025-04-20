@@ -1,3 +1,4 @@
 from vectordb_builder.ranker._lexical import BM25Retriever
+from vectordb_builder.ranker._semantic import SemanticRetriever
 
-__all__ = ["BM25Retriever"]
+__all__ = ["BM25Retriever", "SemanticRetriever"]
