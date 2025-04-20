@@ -21,9 +21,6 @@ class SemanticRetriever(BaseEstimator):
     embedding : transformer
         An embedding following the scikit-learn transformer API.
 
-    top_k : int, default=1
-        Number of documents to retrieve.
-
     persist_directory : str or pathlib.Path, default="./chroma_db"
         Directory where ChromaDB will persist the database.
 
@@ -44,13 +41,11 @@ class SemanticRetriever(BaseEstimator):
 
     _parameter_constraints = {
         "embedding": [HasMethods(["fit_transform", "transform"])],
-        "top_k": [Interval(Integral, left=1, right=None, closed="left")],
         "persist_directory": [str, Path],
     }
 
-    def __init__(self, *, embedding, top_k=1, persist_directory="./chroma_db"):
+    def __init__(self, *, embedding, persist_directory="./chroma_db"):
         self.embedding = embedding
-        self.top_k = top_k
         self.persist_directory = persist_directory
 
     @_fit_context(prefer_skip_nested_validation=False)
@@ -78,6 +73,7 @@ class SemanticRetriever(BaseEstimator):
         persist_path.mkdir(parents=True, exist_ok=True)
 
         self.chroma_client_ = chromadb.PersistentClient(path=str(persist_path))
+
         collection_name = "semantic_retriever"
         try:
             self.collection_ = self.chroma_client_.get_collection(collection_name)
@@ -103,13 +99,16 @@ class SemanticRetriever(BaseEstimator):
         logger.info(f"Index created in {time.time() - start:.2f}s")
         return self
 
-    def query(self, query):
+    def query(self, query, top_k=1):
         """Retrieve the most relevant documents for the query.
 
         Parameters
         ----------
         query : str
             The input data.
+
+        top_k : int, default=1
+            Number of documents to retrieve.
 
         Returns
         -------
@@ -120,14 +119,18 @@ class SemanticRetriever(BaseEstimator):
         if not isinstance(query, str):
             raise TypeError(f"query should be a string, got {type(query)}.")
 
+        if not isinstance(top_k, Integral) or top_k < 1:
+            raise ValueError(f"top_k should be a positive integer, got {top_k}.")
+
         start = time.time()
         X_embedded = self.embedding.transform([query])
 
         results = self.collection_.query(
-            query_embeddings=X_embedded.tolist(), n_results=self.top_k
+            query_embeddings=X_embedded.tolist(), n_results=top_k
         )
 
         indices = [int(id) for id in results["ids"][0]]
+
         logger.info(f"Semantic search done in {time.time() - start:.2f}s")
 
         if isinstance(self.X_fit_[0], dict):
