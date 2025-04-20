@@ -16,8 +16,6 @@ jobs:
         include:
           - platform: linux-64
             runner: ubuntu-latest
-          - platform: osx-arm64
-            runner: macos-latest-large
 
     steps:
       - name: Checkout repository
@@ -33,7 +31,7 @@ jobs:
           cache-write: ${{ github.event_name == 'push' && github.ref_name == 'main' }}
 
       - name: Build scikit-learn documentation
-        run: pixi run build-doc-sklearn
+        run: pixi run -e preamble build-doc-sklearn
 
       - name: Run tests
-        run: pixi run tests
+        run: pixi run -e tests tests
