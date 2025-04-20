@@ -37,3 +37,6 @@ jobs:
 
       - name: Run tests
         run: pixi run -e tests tests
+
+      - name: Run linting
+        run: pixi run -e tests lint
