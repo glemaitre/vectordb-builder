@@ -1,14 +1,12 @@
 from numbers import Integral, Real
-from typing import TYPE_CHECKING, Any, Optional, Union
+from typing import Any, Optional, Union, TYPE_CHECKING
 
 from sklearn.base import BaseEstimator, _fit_context
+from sklearn.utils import Tags
 from sklearn.utils._param_validation import HasMethods, Interval
 
 if TYPE_CHECKING:
-    from sklearn.utils import Tags
-
     from vectordb_builder.ranker import BM25Retriever, SemanticRetriever
-
 
 class RetrieverReranker(BaseEstimator):
     """Hybrid retriever (lexical and semantic) followed by a cross-encoder reranker.
@@ -54,7 +52,7 @@ class RetrieverReranker(BaseEstimator):
     def __init__(
         self,
         *,
-        retrievers: list[Union[SemanticRetriever, BM25Retriever]],
+        retrievers: list[Union["SemanticRetriever", "BM25Retriever"]],
         cross_encoder: Any,
         min_top_k: Optional[int] = None,
         max_top_k: Optional[int] = None,

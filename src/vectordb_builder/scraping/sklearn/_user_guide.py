@@ -5,18 +5,17 @@ import re
 from itertools import chain
 from numbers import Integral
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Optional
+from typing import Any, Optional
 
 from bs4 import BeautifulSoup
 from joblib import Parallel, delayed
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from sklearn.base import BaseEstimator, TransformerMixin, _fit_context
+from sklearn.utils import Tags
 from sklearn.utils._param_validation import Interval
 
 from vectordb_builder.scraping.sklearn._shared import _chunk_document
 
-if TYPE_CHECKING:
-    from sklearn.utils import Tags
 
 SKLEARN_USER_GUIDE_URL = "https://scikit-learn.org/stable/"
 logger = logging.getLogger(__name__)

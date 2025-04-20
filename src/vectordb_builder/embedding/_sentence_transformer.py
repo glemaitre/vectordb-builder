@@ -1,14 +1,13 @@
 """SentenceTransformer with a scikit-learn API."""
 import logging
 import time
-from typing import TYPE_CHECKING, Any, Iterable, Optional, Union, cast
+from typing import Any, Iterable, Optional, Union, cast
 
+from numpy.typing import NDArray
 from sentence_transformers import SentenceTransformer as SentenceTransformerBase
 from sklearn.base import BaseEstimator, TransformerMixin, _fit_context
+from torch import nn
 
-if TYPE_CHECKING:
-    from numpy.typing import NDArray
-    from torch import nn
 
 logger = logging.getLogger(__name__)
 

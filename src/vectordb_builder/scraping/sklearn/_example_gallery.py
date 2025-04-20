@@ -5,16 +5,15 @@ import re
 from itertools import chain
 from numbers import Integral
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Optional
+from typing import Any, Optional
 
 from joblib import Parallel, delayed
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from sklearn.base import BaseEstimator, TransformerMixin, _fit_context
+from sklearn.utils import Tags
 from sklearn.utils._param_validation import Interval
 from sphinx_gallery.py_source_parser import split_code_and_text_blocks
 
-if TYPE_CHECKING:
-    from sklearn.utils import Tags
 
 from vectordb_builder.scraping.sklearn._shared import _chunk_document
 
