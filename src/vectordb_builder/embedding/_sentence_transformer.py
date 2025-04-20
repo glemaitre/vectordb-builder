@@ -124,7 +124,7 @@ class SentenceTransformer(TransformerMixin, BaseEstimator):
         if isinstance(X, str):
             X = cast(list[str], [X])
         elif isinstance(X[0], dict):
-            X = cast(list[str], [chunk["text"] for chunk in X])
+            X = cast(list[str], [cast(dict[str, str], chunk)["text"] for chunk in X])
         start = time.time()
         embedding = self._embedding.encode(
             X,

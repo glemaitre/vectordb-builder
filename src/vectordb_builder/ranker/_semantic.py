@@ -101,7 +101,7 @@ class SemanticRetriever(BaseEstimator):
 
         ids = [str(i) for i in range(len(X))]
         if isinstance(X[0], dict):
-            documents = [item["text"] for item in X]
+            documents = [cast(dict[str, str], item)["text"] for item in X]
         else:
             documents = cast(list[str], X)
 
@@ -148,8 +148,8 @@ class SemanticRetriever(BaseEstimator):
         if isinstance(self.X_fit_[0], dict):
             return [
                 {
-                    "source": self.X_fit_[neighbor]["source"],
-                    "text": self.X_fit_[neighbor]["text"],
+                    "source": cast(dict[str, str], self.X_fit_[neighbor])["source"],
+                    "text": cast(dict[str, str], self.X_fit_[neighbor])["text"],
                 }
                 for neighbor in indices
             ]

@@ -94,7 +94,7 @@ class BM25Retriever(TransformerMixin, BaseEstimator):
         self.X_fit_ = X
 
         if isinstance(X[0], dict):
-            X = cast(list[str], [x["text"] for x in X])
+            X = cast(list[str], [cast(dict[str, str], x)["text"] for x in X])
 
         start = time.time()
         if self.count_vectorizer is None:
@@ -171,8 +171,8 @@ class BM25Retriever(TransformerMixin, BaseEstimator):
         if isinstance(self.X_fit_[0], dict):
             return [
                 {
-                    "source": self.X_fit_[neighbor]["source"],
-                    "text": self.X_fit_[neighbor]["text"],
+                    "source": cast(dict[str, str], self.X_fit_[neighbor])["source"],
+                    "text": cast(dict[str, str], self.X_fit_[neighbor])["text"],
                 }
                 for neighbor in indices
             ]
