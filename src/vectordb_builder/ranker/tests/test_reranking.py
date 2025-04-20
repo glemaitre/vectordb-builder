@@ -2,6 +2,7 @@ from pathlib import Path
 
 import pytest
 from sentence_transformers import CrossEncoder
+from sklearn.utils import get_tags
 
 from vectordb_builder.embedding import SentenceTransformer
 from vectordb_builder.ranker import BM25Retriever, RetrieverReranker, SemanticRetriever
@@ -146,4 +147,5 @@ def test_retriever_reranker_tags(tmp_path):
     retriever_reranker = RetrieverReranker(
         retrievers=[bm25, faiss], cross_encoder=cross_encoder
     )
-    assert retriever_reranker._get_tags()["stateless"]
+    tags = get_tags(retriever_reranker)
+    assert not tags.requires_fit

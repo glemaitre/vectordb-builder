@@ -4,6 +4,7 @@ from numbers import Integral
 from pathlib import Path
 
 import chromadb
+from chromadb.errors import NotFoundError
 from sklearn.base import BaseEstimator, _fit_context
 from sklearn.utils._param_validation import HasMethods, Interval
 from sklearn.utils.validation import check_is_fitted
@@ -83,7 +84,7 @@ class SemanticRetriever(BaseEstimator):
         try:
             self.collection_ = self.chroma_client_.get_collection(collection_name)
             self.collection_.delete(where={})
-        except:
+        except NotFoundError:
             self.collection_ = self.chroma_client_.create_collection(collection_name)
 
         ids = [str(i) for i in range(len(X))]

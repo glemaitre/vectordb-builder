@@ -64,7 +64,7 @@ class RetrieverReranker(BaseEstimator):
 
     @_fit_context(prefer_skip_nested_validation=False)
     def fit(self, X=None, y=None):
-        """Compute the vocabulary and the idf.
+        """No-op fit method.
 
         Parameters
         ----------
