@@ -52,14 +52,14 @@ def test_retriever_reranker(input_texts, params, n_documents, tmp_path):
         cache_folder=str(cache_folder_path),
         show_progress_bar=False,
     )
-    faiss = SemanticRetriever(
+    retriever = SemanticRetriever(
         embedding=embedder, top_k=10, persist_directory=tmp_path
     ).fit(input_texts)
 
     model_name = "cross-encoder/ms-marco-MiniLM-L-6-v2"
     cross_encoder = CrossEncoder(model_name=model_name)
     retriever_reranker = RetrieverReranker(
-        retrievers=[bm25, faiss],
+        retrievers=[bm25, retriever],
         cross_encoder=cross_encoder,
         drop_duplicates=False,
         **params,
@@ -98,14 +98,14 @@ def test_retriever_reranker_drop_duplicate(
         cache_folder=str(cache_folder_path),
         show_progress_bar=False,
     )
-    faiss = SemanticRetriever(
+    retriever = SemanticRetriever(
         embedding=embedder, top_k=10, persist_directory=tmp_path
     ).fit(input_texts)
 
     model_name = "cross-encoder/ms-marco-MiniLM-L-6-v2"
     cross_encoder = CrossEncoder(model_name=model_name)
     retriever_reranker = RetrieverReranker(
-        retrievers=[bm25, faiss],
+        retrievers=[bm25, retriever],
         cross_encoder=cross_encoder,
         max_top_k=None,  # we don't limit the number of retrieved documents
         drop_duplicates=drop_duplicates,
@@ -140,12 +140,12 @@ def test_retriever_reranker_tags(tmp_path):
         cache_folder=str(cache_folder_path),
         show_progress_bar=False,
     )
-    faiss = SemanticRetriever(embedding=embedder, top_k=10, persist_directory=tmp_path)
+    retriever = SemanticRetriever(embedding=embedder, top_k=10, persist_directory=tmp_path)
 
     model_name = "cross-encoder/ms-marco-MiniLM-L-6-v2"
     cross_encoder = CrossEncoder(model_name=model_name)
     retriever_reranker = RetrieverReranker(
-        retrievers=[bm25, faiss], cross_encoder=cross_encoder
+        retrievers=[bm25, retriever], cross_encoder=cross_encoder
     )
     tags = get_tags(retriever_reranker)
     assert not tags.requires_fit
