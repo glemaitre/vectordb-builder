@@ -1,6 +1,6 @@
 import logging
 import time
-from numbers import Real, Integral
+from numbers import Integral, Real
 
 import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin, _fit_context, clone
@@ -25,7 +25,7 @@ class BM25Retriever(TransformerMixin, BaseEstimator):
 
     k1 : float, default=1.6
         The parameter of the BM25 formula.
-        
+
     top_k : int, default=1
         Number of documents to retrieve.
 

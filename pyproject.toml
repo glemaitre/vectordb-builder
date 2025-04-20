@@ -33,10 +33,14 @@ dependencies = [
     "sphinx-gallery>=0.19.0,<0.20",
     "beautifulsoup4>=4.13.4,<5",
     "pytest>=8.3.5,<9",
-    "sentence-transformers>=4.1.0,<5", "chromadb>=1.0.5,<2",
+    "sentence-transformers>=4.1.0,<5",
+    "chromadb>=1.0.5,<2",
 ]
 [dependency-groups]
-tests = ["pytest-xdist"]
+tests = [
+    "pytest-xdist",
+    "pre-commit>=4.2.0,<5",
+]
 preamble = [
     "numpy",
     "scipy",
@@ -84,6 +88,7 @@ build-doc-sklearn = { cmd = "make html-noplot", cwd = "reference_packages/scikit
 
 [tool.pixi.feature.tests.tasks]
 tests = "pytest -vsl src"
+lint = "pre-commit run --all-files"
 
 [tool.pixi.environments]
 default = { solve-group = "default" }

@@ -1,10 +1,10 @@
 from pathlib import Path
 
-import pytest
 import joblib
+import pytest
 
-from vectordb_builder.ranker import SemanticRetriever
 from vectordb_builder.embedding import SentenceTransformer
+from vectordb_builder.ranker import SemanticRetriever
 
 
 @pytest.mark.parametrize(
@@ -53,9 +53,9 @@ def test_semantic_retriever_error(tmp_path):
     )
 
     input_texts = [{"source": "source 1", "text": "xxx"}]
-    retriever = SemanticRetriever(
-        embedding=embedder, persist_directory=tmp_path
-    ).fit(input_texts)
+    retriever = SemanticRetriever(embedding=embedder, persist_directory=tmp_path).fit(
+        input_texts
+    )
     with pytest.raises(TypeError):
         retriever.query(["xxxx"])
 
@@ -164,18 +164,18 @@ def test_semantic_retriever_top_k_parameter(tmp_path):
         "second document",
         "third document",
         "fourth document",
-        "fifth document"
+        "fifth document",
     ]
 
     # Test with different top_k values
     retriever_top_1 = SemanticRetriever(
         embedding=embedder, persist_directory=tmp_path, top_k=1
     ).fit(input_texts)
-    
+
     retriever_top_3 = SemanticRetriever(
         embedding=embedder, persist_directory=tmp_path / "top_3", top_k=3
     ).fit(input_texts)
-    
+
     retriever_top_5 = SemanticRetriever(
         embedding=embedder, persist_directory=tmp_path / "top_5", top_k=5
     ).fit(input_texts)

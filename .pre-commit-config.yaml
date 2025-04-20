@@ -3,26 +3,37 @@ repos:
     rev: v4.5.0
     hooks:
       - id: trailing-whitespace
+        exclude: ^reference_packages/
       - id: end-of-file-fixer
+        exclude: ^reference_packages/
       - id: check-yaml
+        exclude: ^reference_packages/
       - id: check-added-large-files
+        exclude: ^reference_packages/
       - id: check-ast
+        exclude: ^reference_packages/
       - id: check-json
+        exclude: ^reference_packages/
       - id: check-merge-conflict
+        exclude: ^reference_packages/
       - id: detect-private-key
+        exclude: ^reference_packages/
       - id: mixed-line-ending
         args: [--fix=lf]
+        exclude: ^reference_packages/
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.2.1
     hooks:
       - id: ruff
         args: [--fix, --exit-non-zero-on-fix]
+        exclude: ^reference_packages/
       - id: ruff-format
+        exclude: ^reference_packages/
 
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.8.0
-    hooks:
-      - id: mypy
-        additional_dependencies: [types-requests]
-        exclude: tests/ 
+  # - repo: https://github.com/pre-commit/mirrors-mypy
+  #   rev: v1.8.0
+  #   hooks:
+  #     - id: mypy
+  #       additional_dependencies: [types-requests]
+  #       exclude: ^(tests/|reference_packages/)

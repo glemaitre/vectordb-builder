@@ -52,9 +52,7 @@ def test_retriever_reranker(input_texts, params, n_documents, tmp_path):
         show_progress_bar=False,
     )
     faiss = SemanticRetriever(
-        embedding=embedder,
-        top_k=10,
-        persist_directory=tmp_path
+        embedding=embedder, top_k=10, persist_directory=tmp_path
     ).fit(input_texts)
 
     model_name = "cross-encoder/ms-marco-MiniLM-L-6-v2"
@@ -100,9 +98,7 @@ def test_retriever_reranker_drop_duplicate(
         show_progress_bar=False,
     )
     faiss = SemanticRetriever(
-        embedding=embedder,
-        top_k=10,
-        persist_directory=tmp_path
+        embedding=embedder, top_k=10, persist_directory=tmp_path
     ).fit(input_texts)
 
     model_name = "cross-encoder/ms-marco-MiniLM-L-6-v2"
@@ -143,11 +139,7 @@ def test_retriever_reranker_tags(tmp_path):
         cache_folder=str(cache_folder_path),
         show_progress_bar=False,
     )
-    faiss = SemanticRetriever(
-        embedding=embedder,
-        top_k=10,
-        persist_directory=tmp_path
-    )
+    faiss = SemanticRetriever(embedding=embedder, top_k=10, persist_directory=tmp_path)
 
     model_name = "cross-encoder/ms-marco-MiniLM-L-6-v2"
     cross_encoder = CrossEncoder(model_name=model_name)
