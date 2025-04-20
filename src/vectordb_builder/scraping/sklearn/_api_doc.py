@@ -44,7 +44,7 @@ def _merge_docstring(docstring):
     return merged_docstring
 
 
-def _extract_function_doc_numpydoc(function, import_name, html_source):
+def _extract_function_doc_numpydoc(function, import_name, html_source):  # noqa: C901
     """Extract documentation from a function using `numpydoc`.
 
     Parameters
@@ -69,7 +69,8 @@ def _extract_function_doc_numpydoc(function, import_name, html_source):
     except TypeError as exc:
         # Case where `function.__doc__` is `None`
         warnings.warn(
-            f"Fail to parse the docstring of {function.__name__}. Error message: {exc}"
+            f"Fail to parse the docstring of {function.__name__}. Error message: {exc}",
+            stacklevel=2,
         )
         return
     try:
@@ -77,7 +78,8 @@ def _extract_function_doc_numpydoc(function, import_name, html_source):
     except ValueError as exc:  # pragma: no cover
         # Case where the function is a Cython function
         warnings.warn(
-            f"Fail to find the signature of {function.__name__}. Error message: {exc}"
+            f"Fail to find the signature of {function.__name__}. Error message: {exc}",
+            stacklevel=2,
         )
         return
     extracted_doc = []
@@ -219,7 +221,7 @@ class APINumPyDocExtractor(TransformerMixin, BaseEstimator):
         """
         return self
 
-    def transform(self, X):
+    def transform(self, X):  # noqa: C901
         """Extract text from the API documentation.
 
         Parameters
@@ -253,7 +255,7 @@ class APINumPyDocExtractor(TransformerMixin, BaseEstimator):
                 else:
                     raise ValueError(
                         f"Fail to split the full name {full_name}. Error message: {exc}"
-                    )
+                    ) from exc
             if module_name == "sklearn.experimental":  # pragma: no cover
                 # FIXME: Only module are available in experimental
                 continue
@@ -266,7 +268,8 @@ class APINumPyDocExtractor(TransformerMixin, BaseEstimator):
             if not hasattr(module, class_or_function_name):  # pragma: no cover
                 warnings.warn(
                     f"Fail to find the class or function {class_or_function_name}. "
-                    "It could be a module. Skipping it."
+                    "It could be a module. Skipping it.",
+                    stacklevel=2,
                 )
                 continue
             class_or_function = getattr(module, class_or_function_name)
