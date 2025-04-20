@@ -20,7 +20,7 @@ from vectordb_builder.ranker import BM25Retriever
 @pytest.mark.parametrize("count_vectorizer", [None, CountVectorizer()])
 def test_lexical_retriever(input_texts, output, count_vectorizer):
     """Check that the SemanticRetriever wrapper works as expected"""
-    bm25 = BM25Retriever(count_vectorizer=count_vectorizer).fit(input_texts)
+    bm25 = BM25Retriever(count_vectorizer=count_vectorizer, top_k=1).fit(input_texts)
     assert bm25.query("xxx") == output
 
 

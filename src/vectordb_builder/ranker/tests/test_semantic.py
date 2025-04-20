@@ -34,9 +34,9 @@ def test_semantic_retriever(input_texts, output, tmp_path):
     )
 
     retriever = SemanticRetriever(
-        embedding=embedder, persist_directory=tmp_path
+        embedding=embedder, persist_directory=tmp_path, top_k=1
     ).fit(input_texts)
-    assert retriever.query("xx", top_k=1) == output
+    assert retriever.query("xx") == output
 
 
 def test_semantic_retriever_error(tmp_path):
@@ -84,9 +84,9 @@ def test_semantic_retriever_max_documents_at_fit(input_texts, tmp_path):
     )
 
     retriever = SemanticRetriever(
-        embedding=embedder, persist_directory=tmp_path
+        embedding=embedder, persist_directory=tmp_path, top_k=20
     ).fit(input_texts)
-    assert len(retriever.query("xx", top_k=20)) == len(input_texts)
+    assert len(retriever.query("xx")) == len(input_texts)
 
 
 def test_semantic_retriever_pathlib_support(tmp_path):
@@ -106,10 +106,10 @@ def test_semantic_retriever_pathlib_support(tmp_path):
 
     input_texts = ["xxx", "yyy"]
     retriever = SemanticRetriever(
-        embedding=embedder, persist_directory=path_object
+        embedding=embedder, persist_directory=path_object, top_k=1
     ).fit(input_texts)
 
-    assert retriever.query("xx", top_k=1) == ["xxx"]
+    assert retriever.query("xx") == ["xxx"]
     assert path_object.exists()
 
 
@@ -130,24 +130,24 @@ def test_semantic_retriever_pickle_unpickle(tmp_path):
 
     input_texts = ["text sample one", "text sample two", "completely different content"]
     retriever = SemanticRetriever(
-        embedding=embedder, persist_directory=persist_dir
+        embedding=embedder, persist_directory=persist_dir, top_k=1
     ).fit(input_texts)
 
-    query_result_before = retriever.query("sample", top_k=1)
+    query_result_before = retriever.query("sample")
 
     pickle_path = Path(tmp_path) / "semantic_retriever.joblib"
     joblib.dump(retriever, pickle_path)
 
     unpickled_retriever = joblib.load(pickle_path)
 
-    query_result_after = unpickled_retriever.query("sample", top_k=1)
+    query_result_after = unpickled_retriever.query("sample")
     assert query_result_before == query_result_after
 
     assert unpickled_retriever.persist_directory == persist_dir
 
 
 def test_semantic_retriever_top_k_parameter(tmp_path):
-    """Check that the top_k parameter in query method works as expected."""
+    """Check that the top_k parameter works as expected."""
     cache_folder_path = (
         Path(__file__).parent.parent.parent / "embedding" / "tests" / "data"
     )
@@ -167,22 +167,23 @@ def test_semantic_retriever_top_k_parameter(tmp_path):
         "fifth document"
     ]
 
-    retriever = SemanticRetriever(
-        embedding=embedder, persist_directory=tmp_path
+    # Test with different top_k values
+    retriever_top_1 = SemanticRetriever(
+        embedding=embedder, persist_directory=tmp_path, top_k=1
+    ).fit(input_texts)
+    
+    retriever_top_3 = SemanticRetriever(
+        embedding=embedder, persist_directory=tmp_path / "top_3", top_k=3
+    ).fit(input_texts)
+    
+    retriever_top_5 = SemanticRetriever(
+        embedding=embedder, persist_directory=tmp_path / "top_5", top_k=5
     ).fit(input_texts)
 
-    # Test with different top_k values
-    result_top_1 = retriever.query("document", top_k=1)
-    result_top_3 = retriever.query("document", top_k=3)
-    result_top_5 = retriever.query("document", top_k=5)
+    result_top_1 = retriever_top_1.query("document")
+    result_top_3 = retriever_top_3.query("document")
+    result_top_5 = retriever_top_5.query("document")
 
     assert len(result_top_1) == 1
     assert len(result_top_3) == 3
     assert len(result_top_5) == 5
-
-    # Test with invalid top_k values
-    with pytest.raises(ValueError):
-        retriever.query("document", top_k=0)
-
-    with pytest.raises(ValueError):
-        retriever.query("document", top_k=-1)

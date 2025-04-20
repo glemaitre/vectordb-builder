@@ -24,6 +24,9 @@ class SemanticRetriever(BaseEstimator):
     persist_directory : str or pathlib.Path, default="./chroma_db"
         Directory where ChromaDB will persist the database.
 
+    top_k : int, default=1
+        Number of documents to retrieve.
+
     Attributes
     ----------
     X_fit_ : list of str or dict
@@ -42,11 +45,13 @@ class SemanticRetriever(BaseEstimator):
     _parameter_constraints = {
         "embedding": [HasMethods(["fit_transform", "transform"])],
         "persist_directory": [str, Path],
+        "top_k": [Interval(Integral, 1, None, closed="left")],
     }
 
-    def __init__(self, *, embedding, persist_directory="./chroma_db"):
+    def __init__(self, *, embedding, persist_directory="./chroma_db", top_k=1):
         self.embedding = embedding
         self.persist_directory = persist_directory
+        self.top_k = top_k
 
     @_fit_context(prefer_skip_nested_validation=False)
     def fit(self, X, y=None):
@@ -99,16 +104,13 @@ class SemanticRetriever(BaseEstimator):
         logger.info(f"Index created in {time.time() - start:.2f}s")
         return self
 
-    def query(self, query, top_k=1):
+    def query(self, query):
         """Retrieve the most relevant documents for the query.
 
         Parameters
         ----------
         query : str
             The input data.
-
-        top_k : int, default=1
-            Number of documents to retrieve.
 
         Returns
         -------
@@ -119,14 +121,11 @@ class SemanticRetriever(BaseEstimator):
         if not isinstance(query, str):
             raise TypeError(f"query should be a string, got {type(query)}.")
 
-        if not isinstance(top_k, Integral) or top_k < 1:
-            raise ValueError(f"top_k should be a positive integer, got {top_k}.")
-
         start = time.time()
         X_embedded = self.embedding.transform([query])
 
         results = self.collection_.query(
-            query_embeddings=X_embedded.tolist(), n_results=top_k
+            query_embeddings=X_embedded.tolist(), n_results=self.top_k
         )
 
         indices = [int(id) for id in results["ids"][0]]

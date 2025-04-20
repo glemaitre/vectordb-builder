@@ -1,6 +1,6 @@
 import logging
 import time
-from numbers import Real
+from numbers import Real, Integral
 
 import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin, _fit_context, clone
@@ -25,6 +25,9 @@ class BM25Retriever(TransformerMixin, BaseEstimator):
 
     k1 : float, default=1.6
         The parameter of the BM25 formula.
+        
+    top_k : int, default=1
+        Number of documents to retrieve.
 
     Attributes
     ----------
@@ -51,12 +54,14 @@ class BM25Retriever(TransformerMixin, BaseEstimator):
         "count_vectorizer": [HasMethods(["fit_transform", "transform"]), None],
         "b": [Interval(Real, 0.0, 1.0, closed="left")],
         "k1": [Interval(Real, 0.0, 10.0, closed="left")],
+        "top_k": [Interval(Integral, 1, None, closed="left")],
     }
 
-    def __init__(self, *, count_vectorizer=None, b=0.75, k1=1.6):
+    def __init__(self, *, count_vectorizer=None, b=0.75, k1=1.6, top_k=1):
         self.count_vectorizer = count_vectorizer
         self.b = b
         self.k1 = k1
+        self.top_k = top_k
 
     @_fit_context(prefer_skip_nested_validation=False)
     def fit(self, X, y=None):
@@ -135,16 +140,13 @@ class BM25Retriever(TransformerMixin, BaseEstimator):
         logger.info(f"BM25Retriever scored in {time.time() - start:.2f}s")
         return scores
 
-    def query(self, query, top_k=1):
+    def query(self, query):
         """Retrieve the most relevant documents for the query.
 
         Parameters
         ----------
         query : str
             The query.
-
-        top_k : int, default=1
-            Number of documents to retrieve.
 
         Returns
         -------
@@ -153,7 +155,7 @@ class BM25Retriever(TransformerMixin, BaseEstimator):
         """
         start = time.time()
         scores = self.transform(query)
-        indices = scores.argsort()[::-1][: top_k]
+        indices = scores.argsort()[::-1][: self.top_k]
         logger.info(f"BM25Retriever scored and retrieved in {time.time() - start:.2f}s")
         if isinstance(self.X_fit_[0], dict):
             return [
