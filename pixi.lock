@@ -6224,7 +6224,7 @@ packages:
 - pypi: .
   name: vectordb-builder
   version: 0.0.1.dev0
-  sha256: 941bbc65963d9fcbec571d2b9894f2ea9fe4af5cb27a77d875ce7750968a9859
+  sha256: 8845a0489dffac00f40c40727285fe199bbe93f7efb24e1d4f2f6f891be05538
   requires_dist:
   - scikit-learn==1.6.1
   - numpydoc>=1.8.0,<2

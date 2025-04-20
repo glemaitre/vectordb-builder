@@ -4,14 +4,19 @@ import importlib
 import inspect
 import re
 import warnings
+from pathlib import Path
+from typing import TYPE_CHECKING, Any, Callable, Union
 
 from numpydoc.docscrape import NumpyDocString
 from sklearn.base import BaseEstimator, TransformerMixin, _fit_context
 
+if TYPE_CHECKING:
+    from sklearn.utils import Tags
+
 SKLEARN_API_URL = "https://scikit-learn.org/stable/modules/generated/"
 
 
-def _api_path_to_api_url(path):
+def _api_path_to_api_url(path: Path) -> str:
     """Convert a API path to an API URL.
 
     Parameters
@@ -27,7 +32,7 @@ def _api_path_to_api_url(path):
     return SKLEARN_API_URL + path.name
 
 
-def _merge_docstring(docstring):
+def _merge_docstring(docstring: list[str]) -> str:
     """Merging a list of docstring into a single string with extra stripping."""
     merged_docstring = ""
     for doc in docstring:
@@ -44,7 +49,9 @@ def _merge_docstring(docstring):
     return merged_docstring
 
 
-def _extract_function_doc_numpydoc(function, import_name, html_source):  # noqa: C901
+def _extract_function_doc_numpydoc(
+    function: Callable, import_name: str, html_source: str
+) -> Union[list[dict[str, str]], None]:
     """Extract documentation from a function using `numpydoc`.
 
     Parameters
@@ -60,7 +67,7 @@ def _extract_function_doc_numpydoc(function, import_name, html_source):  # noqa:
 
     Returns
     -------
-    list of dict
+    list of dict or None
         List of dictionary with the keys `source` and `text` containing the
         documentation of the function.
     """
@@ -72,7 +79,7 @@ def _extract_function_doc_numpydoc(function, import_name, html_source):  # noqa:
             f"Fail to parse the docstring of {function.__name__}. Error message: {exc}",
             stacklevel=2,
         )
-        return
+        return None
     try:
         params = inspect.signature(function).parameters
     except ValueError as exc:  # pragma: no cover
@@ -81,7 +88,7 @@ def _extract_function_doc_numpydoc(function, import_name, html_source):  # noqa:
             f"Fail to find the signature of {function.__name__}. Error message: {exc}",
             stacklevel=2,
         )
-        return
+        return None
     extracted_doc = []
     if len(params) > 0:
         # We merge both the parameters and the function signature since it leads to
@@ -200,10 +207,10 @@ class APINumPyDocExtractor(TransformerMixin, BaseEstimator):
     Read more in the :ref:`User Guide <api_doc_scraping>`.
     """
 
-    _parameter_constraints = {}
+    _parameter_constraints: dict[str, Any] = {}
 
     @_fit_context(prefer_skip_nested_validation=False)
-    def fit(self, X=None, y=None):
+    def fit(self, X: Any = None, y: Any = None) -> "APINumPyDocExtractor":
         """No-op operation, only validate parameters.
 
         Parameters
@@ -221,7 +228,7 @@ class APINumPyDocExtractor(TransformerMixin, BaseEstimator):
         """
         return self
 
-    def transform(self, X):  # noqa: C901
+    def transform(self, X: Path) -> list[dict[str, str]]:
         """Extract text from the API documentation.
 
         Parameters
@@ -298,7 +305,7 @@ class APINumPyDocExtractor(TransformerMixin, BaseEstimator):
                         output += extracted_doc
         return output
 
-    def __sklearn_tags__(self):
+    def __sklearn_tags__(self) -> "Tags":
         tags = super().__sklearn_tags__()
         tags.input_tags.string = True
         tags.requires_fit = False

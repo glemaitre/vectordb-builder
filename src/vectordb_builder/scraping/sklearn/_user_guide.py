@@ -5,6 +5,7 @@ import re
 from itertools import chain
 from numbers import Integral
 from pathlib import Path
+from typing import TYPE_CHECKING, Any, Optional
 
 from bs4 import BeautifulSoup
 from joblib import Parallel, delayed
@@ -14,11 +15,14 @@ from sklearn.utils._param_validation import Interval
 
 from vectordb_builder.scraping.sklearn._shared import _chunk_document
 
+if TYPE_CHECKING:
+    from sklearn.utils import Tags
+
 SKLEARN_USER_GUIDE_URL = "https://scikit-learn.org/stable/"
 logger = logging.getLogger(__name__)
 
 
-def _user_guide_path_to_user_guide_url(path):
+def _user_guide_path_to_user_guide_url(path: Path) -> str:
     """Convert a User Guide path to an User Guide URL.
 
     Parameters
@@ -38,7 +42,7 @@ def _user_guide_path_to_user_guide_url(path):
     return SKLEARN_USER_GUIDE_URL + str(path.relative_to(parent))
 
 
-def extract_user_guide_doc_from_single_file(html_file):
+def extract_user_guide_doc_from_single_file(html_file: Path) -> dict[str, str]:
     """Extract the text from the User Guide documentation.
 
     This function can process classes and functions.
@@ -88,7 +92,9 @@ def extract_user_guide_doc_from_single_file(html_file):
     }
 
 
-def _extract_user_guide_doc(user_guide_doc_folder, black_listed_folders):
+def _extract_user_guide_doc(
+    user_guide_doc_folder: Path, black_listed_folders: Optional[list[str]]
+) -> list[dict[str, str]]:
     """Extract text from each HTML User Guide files from a folder
 
     Parameters
@@ -160,7 +166,12 @@ class UserGuideDocExtractor(TransformerMixin, BaseEstimator):
     }
 
     def __init__(
-        self, *, folders_to_exclude=None, chunk_size=300, chunk_overlap=50, n_jobs=None
+        self,
+        *,
+        folders_to_exclude: Optional[list[str]] = None,
+        chunk_size: int = 300,
+        chunk_overlap: int = 50,
+        n_jobs: Optional[int] = None,
     ):
         self.folders_to_exclude = folders_to_exclude
         self.chunk_size = chunk_size
@@ -168,7 +179,9 @@ class UserGuideDocExtractor(TransformerMixin, BaseEstimator):
         self.n_jobs = n_jobs
 
     @_fit_context(prefer_skip_nested_validation=False)
-    def fit(self, X=None, y=None):
+    def fit(
+        self, X: Optional[Any] = None, y: Optional[Any] = None
+    ) -> "UserGuideDocExtractor":
         """No-op operation, only validate parameters.
 
         Parameters
@@ -195,7 +208,7 @@ class UserGuideDocExtractor(TransformerMixin, BaseEstimator):
             self.text_splitter_ = None
         return self
 
-    def transform(self, X):
+    def transform(self, X: Path) -> list[dict[str, str]]:
         """Extract text from the API documentation.
 
         Parameters
@@ -229,7 +242,7 @@ class UserGuideDocExtractor(TransformerMixin, BaseEstimator):
             )
         return output
 
-    def __sklearn_tags__(self):
+    def __sklearn_tags__(self) -> Tags:
         tags = super().__sklearn_tags__()
         tags.input_tags.string = True
         tags.requires_fit = False

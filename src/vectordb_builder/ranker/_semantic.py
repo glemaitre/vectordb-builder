@@ -2,12 +2,16 @@ import logging
 import time
 from numbers import Integral
 from pathlib import Path
+from typing import TYPE_CHECKING, Any, Union, cast
 
 import chromadb
 from chromadb.errors import NotFoundError
 from sklearn.base import BaseEstimator, _fit_context
 from sklearn.utils._param_validation import HasMethods, Interval
 from sklearn.utils.validation import check_is_fitted
+
+if TYPE_CHECKING:
+    from sklearn.base import BaseEstimator
 
 logger = logging.getLogger(__name__)
 
@@ -49,13 +53,21 @@ class SemanticRetriever(BaseEstimator):
         "top_k": [Interval(Integral, 1, None, closed="left")],
     }
 
-    def __init__(self, *, embedding, persist_directory="./chroma_db", top_k=1):
+    def __init__(
+        self,
+        *,
+        embedding: BaseEstimator,
+        persist_directory: Union[str, Path] = "./chroma_db",
+        top_k: int = 1,
+    ):
         self.embedding = embedding
         self.persist_directory = persist_directory
         self.top_k = top_k
 
     @_fit_context(prefer_skip_nested_validation=False)
-    def fit(self, X, y=None):
+    def fit(
+        self, X: Union[list[str], list[dict[str, str]]], y: Any = None
+    ) -> "SemanticRetriever":
         """Embed the sentences and create the collection.
 
         Parameters
@@ -91,7 +103,7 @@ class SemanticRetriever(BaseEstimator):
         if isinstance(X[0], dict):
             documents = [item["text"] for item in X]
         else:
-            documents = X
+            documents = cast(list[str], X)
 
         batch_size = 1_000
         for i in range(0, len(ids), batch_size):
@@ -105,7 +117,7 @@ class SemanticRetriever(BaseEstimator):
         logger.info(f"Index created in {time.time() - start:.2f}s")
         return self
 
-    def query(self, query):
+    def query(self, query: str) -> list[Union[str, dict]]:
         """Retrieve the most relevant documents for the query.
 
         Parameters
@@ -144,7 +156,7 @@ class SemanticRetriever(BaseEstimator):
         else:  # isinstance(self.X_fit_[0], str)
             return [self.X_fit_[neighbor] for neighbor in indices]
 
-    def __getstate__(self):
+    def __getstate__(self) -> dict:
         """Custom state for pickling."""
         state = self.__dict__.copy()
         if "chroma_client_" in state:
@@ -153,7 +165,7 @@ class SemanticRetriever(BaseEstimator):
             del state["collection_"]
         return state
 
-    def __setstate__(self, state):
+    def __setstate__(self, state: dict) -> None:
         """Restore state when unpickling."""
         self.__dict__.update(state)
         if hasattr(self, "X_fit_"):

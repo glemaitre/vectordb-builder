@@ -1,9 +1,14 @@
 """SentenceTransformer with a scikit-learn API."""
 import logging
 import time
+from typing import TYPE_CHECKING, Any, Iterable, Optional, Union, cast
 
 from sentence_transformers import SentenceTransformer as SentenceTransformerBase
 from sklearn.base import BaseEstimator, TransformerMixin, _fit_context
+
+if TYPE_CHECKING:
+    from numpy.typing import NDArray
+    from torch import nn
 
 logger = logging.getLogger(__name__)
 
@@ -55,13 +60,14 @@ class SentenceTransformer(TransformerMixin, BaseEstimator):
 
     def __init__(
         self,
-        model_name_or_path=None,
-        modules=None,
-        device=None,
-        cache_folder=None,
-        use_auth_token=None,
-        batch_size=32,
-        show_progress_bar=True,
+        *,
+        model_name_or_path: Optional[str] = None,
+        modules: Optional[Iterable[nn.Module]] = None,
+        device: Optional[str] = None,
+        cache_folder: Optional[str] = None,
+        use_auth_token: Optional[Union[str, bool]] = None,
+        batch_size: Optional[int] = 32,
+        show_progress_bar: Optional[bool] = True,
     ):
         self.model_name_or_path = model_name_or_path
         self.modules = modules
@@ -72,7 +78,7 @@ class SentenceTransformer(TransformerMixin, BaseEstimator):
         self.show_progress_bar = show_progress_bar
 
     @_fit_context(prefer_skip_nested_validation=False)
-    def fit(self, X=None, y=None):
+    def fit(self, X: Any = None, y: Any = None) -> "SentenceTransformer":
         """No-op operation, only validate parameters.
 
         Parameters
@@ -97,7 +103,7 @@ class SentenceTransformer(TransformerMixin, BaseEstimator):
         )
         return self
 
-    def transform(self, X):
+    def transform(self, X: Union[str, list[str], list[dict[str, str]]]) -> NDArray:
         """Embed sentences to vectors.
 
         Parameters
@@ -116,9 +122,9 @@ class SentenceTransformer(TransformerMixin, BaseEstimator):
             The embedding of the sentences.
         """
         if isinstance(X, str):
-            X = [X]
+            X = cast(list[str], [X])
         elif isinstance(X[0], dict):
-            X = [chunk["text"] for chunk in X]
+            X = cast(list[str], [chunk["text"] for chunk in X])
         start = time.time()
         embedding = self._embedding.encode(
             X,

@@ -1,7 +1,13 @@
 from numbers import Integral, Real
+from typing import TYPE_CHECKING, Any, Optional, Union
 
 from sklearn.base import BaseEstimator, _fit_context
 from sklearn.utils._param_validation import HasMethods, Interval
+
+if TYPE_CHECKING:
+    from sklearn.utils import Tags
+
+    from vectordb_builder.ranker import BM25Retriever, SemanticRetriever
 
 
 class RetrieverReranker(BaseEstimator):
@@ -48,12 +54,12 @@ class RetrieverReranker(BaseEstimator):
     def __init__(
         self,
         *,
-        retrievers,
-        cross_encoder,
-        min_top_k=None,
-        max_top_k=None,
-        threshold=None,
-        drop_duplicates=True,
+        retrievers: list[Union[SemanticRetriever, BM25Retriever]],
+        cross_encoder: Any,
+        min_top_k: Optional[int] = None,
+        max_top_k: Optional[int] = None,
+        threshold: Optional[float] = None,
+        drop_duplicates: bool = True,
     ):
         self.retrievers = retrievers
         self.cross_encoder = cross_encoder
@@ -63,7 +69,11 @@ class RetrieverReranker(BaseEstimator):
         self.drop_duplicates = drop_duplicates
 
     @_fit_context(prefer_skip_nested_validation=False)
-    def fit(self, X=None, y=None):
+    def fit(
+        self,
+        X: Optional[Union[list[str], dict[str, str]]] = None,
+        y: Optional[Any] = None,
+    ) -> "RetrieverReranker":
         """No-op fit method.
 
         Parameters
@@ -82,12 +92,12 @@ class RetrieverReranker(BaseEstimator):
         return self
 
     @staticmethod
-    def _get_context(search):
+    def _get_context(search: Union[dict[str, str], str]) -> str:
         if isinstance(search, dict):
             return search["text"]
         return search
 
-    def query(self, query):
+    def query(self, query: str) -> list[Union[dict[str, str], str]]:
         """Retrieve the most relevant documents for the query.
 
         Parameters
@@ -100,7 +110,7 @@ class RetrieverReranker(BaseEstimator):
         list of str or dict
             The list of the most relevant document from the training set.
         """
-        unranked_search = []
+        unranked_search: list[Union[dict[str, str], str]] = []
         for retriever in self.retrievers:
             unranked_search += retriever.query(query)
 
@@ -138,7 +148,7 @@ class RetrieverReranker(BaseEstimator):
 
         return [unranked_search[idx] for idx in indices_thresholded]
 
-    def __sklearn_tags__(self):
+    def __sklearn_tags__(self) -> Tags:
         tags = super().__sklearn_tags__()
         tags.requires_fit = False
         return tags

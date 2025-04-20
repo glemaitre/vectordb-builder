@@ -1,4 +1,9 @@
-def _chunk_document(text_splitter, document):
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+
+
+def _chunk_document(
+    text_splitter: RecursiveCharacterTextSplitter, document: dict[str, str]
+) -> list[dict[str, str]]:
     """Chunk a document into smaller pieces.
 
     Parameters

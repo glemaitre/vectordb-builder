@@ -1,8 +1,10 @@
 import logging
 import time
 from numbers import Integral, Real
+from typing import Any, Optional, Union, cast
 
 import numpy as np
+from numpy.typing import NDArray
 from sklearn.base import BaseEstimator, TransformerMixin, _fit_context, clone
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.utils._param_validation import HasMethods, Interval
@@ -57,14 +59,23 @@ class BM25Retriever(TransformerMixin, BaseEstimator):
         "top_k": [Interval(Integral, 1, None, closed="left")],
     }
 
-    def __init__(self, *, count_vectorizer=None, b=0.75, k1=1.6, top_k=1):
+    def __init__(
+        self,
+        *,
+        count_vectorizer: Optional[CountVectorizer] = None,
+        b: float = 0.75,
+        k1: float = 1.6,
+        top_k: int = 1,
+    ):
         self.count_vectorizer = count_vectorizer
         self.b = b
         self.k1 = k1
         self.top_k = top_k
 
     @_fit_context(prefer_skip_nested_validation=False)
-    def fit(self, X, y=None):
+    def fit(
+        self, X: Union[list[str], list[dict[str, str]]], y: Any = None
+    ) -> "BM25Retriever":
         """Compute the vocabulary and the idf.
 
         Parameters
@@ -83,7 +94,7 @@ class BM25Retriever(TransformerMixin, BaseEstimator):
         self.X_fit_ = X
 
         if isinstance(X[0], dict):
-            X = [x["text"] for x in X]
+            X = cast(list[str], [x["text"] for x in X])
 
         start = time.time()
         if self.count_vectorizer is None:
@@ -106,7 +117,7 @@ class BM25Retriever(TransformerMixin, BaseEstimator):
         logger.info(f"BM25Retriever fitted in {time.time() - start:.2f}s")
         return self
 
-    def transform(self, X):
+    def transform(self, X: Union[str, dict[str, str]]) -> NDArray:
         """Retrieve the most relevant documents for the query.
 
         Parameters
@@ -116,8 +127,8 @@ class BM25Retriever(TransformerMixin, BaseEstimator):
 
         Returns
         -------
-        list of str or dict
-            The list of the most relevant document from the training set.
+        np.ndarray of shape (n_documents,)
+            The scores of the documents.
         """
         check_is_fitted(self, "X_fit_")
         if not isinstance(X, str):
@@ -140,7 +151,7 @@ class BM25Retriever(TransformerMixin, BaseEstimator):
         logger.info(f"BM25Retriever scored in {time.time() - start:.2f}s")
         return scores
 
-    def query(self, query):
+    def query(self, query: str) -> list[Union[str, dict[str, str]]]:
         """Retrieve the most relevant documents for the query.
 
         Parameters

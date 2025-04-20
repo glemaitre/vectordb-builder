@@ -112,18 +112,19 @@ select = [
 ignore = [
     "E203",  # whitespace before ':'
     "E501",  # line too long
+    "C901",  # too complex
 ]
 
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["F401"]
 
 [tool.mypy]
-python_version = "3.8"
+python_version = "3.9"
 warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = true
 disallow_incomplete_defs = true
-exclude = "tests/"
+exclude = "tests/|.*/tests/.*"
 
 [[tool.mypy.overrides]]
 module = "tests.*"
