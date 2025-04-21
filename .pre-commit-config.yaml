@@ -36,4 +36,4 @@ repos:
     hooks:
       - id: mypy
         additional_dependencies: [types-requests]
-        exclude: ^(reference_packages/|.*tests/.*)
+        exclude: ^(reference_packages/|.*tests/.*|scripts/)

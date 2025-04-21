@@ -1,9 +1,10 @@
+from typing import cast
+
+import configuration as conf
 import joblib
 from mcp.server.fastmcp import FastMCP
 from sentence_transformers import CrossEncoder
 from vectordb_builder.ranker import RetrieverReranker
-
-import configuration as conf
 
 mcp = FastMCP("documentation")
 
@@ -44,8 +45,10 @@ def search_in_index(query: str) -> str:
     """
     results = retriever.query(query)
     if isinstance(results[0], dict):
-        return "\n".join([result["text"] for result in results])
-    return "\n".join(results)
+        return "\n".join(
+            [result["text"] for result in cast(list[dict[str, str]], results)]
+        )
+    return "\n".join(cast(list[str], results))
 
 
 if __name__ == "__main__":
