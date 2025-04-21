@@ -35,6 +35,7 @@ dependencies = [
     "pytest>=8.3.5,<9",
     "sentence-transformers>=4.1.0,<5",
     "chromadb>=1.0.5,<2",
+    "mcp>=1.6.0,<2",
 ]
 [dependency-groups]
 tests = [
@@ -82,6 +83,9 @@ python = ">=3.9"
 
 [tool.pixi.pypi-dependencies]
 vectordb_builder = { path = ".", editable = true }
+
+[tool.pixi.tasks]
+mcp-server-sklearn-doc = { cmd = "python documentation.py", cwd = "mcp_servers" }
 
 [tool.pixi.feature.preamble.tasks]
 build-doc-sklearn = { cmd = "make html-noplot", cwd = "reference_packages/scikit-learn/doc" }

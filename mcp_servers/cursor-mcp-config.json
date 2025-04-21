@@ -1,0 +1,14 @@
+{
+    "mcpServers": {
+      "server-name": {
+        "command": "pixi",
+        "args": [
+          "run",
+          "--manifest-path",
+          "/Users/glemaitre/Documents/packages/docs-vectordb-builder/pyproject.toml",
+          "mcp-server-sklearn-doc"
+        ],
+        "env": {}
+      }
+    }
+  }
