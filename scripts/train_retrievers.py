@@ -42,7 +42,12 @@ api_scraper = APINumPyDocExtractor()
 pipeline = Pipeline(
     steps=[
         ("extractor", api_scraper),
-        ("semantic_retriever", SemanticRetriever(embedding=embedding, top_k=15)),
+        (
+            "semantic_retriever",
+            SemanticRetriever(
+                embedding=embedding, persist_directory=config.API_CHROMA_PATH, top_k=15
+            ),
+        ),
     ]
 )
 pipeline.fit(API_DOC)
@@ -102,7 +107,14 @@ user_guide_scraper = UserGuideDocExtractor(
 pipeline = Pipeline(
     steps=[
         ("extractor", user_guide_scraper),
-        ("semantic_retriever", SemanticRetriever(embedding=embedding, top_k=15)),
+        (
+            "semantic_retriever",
+            SemanticRetriever(
+                embedding=embedding,
+                persist_directory=config.USER_GUIDE_CHROMA_PATH,
+                top_k=15,
+            ),
+        ),
     ]
 )
 pipeline.fit(USER_GUIDE_DOC)
@@ -156,7 +168,14 @@ gallery_scraper = GalleryExampleExtractor(
 pipeline = Pipeline(
     steps=[
         ("extractor", gallery_scraper),
-        ("semantic_retriever", SemanticRetriever(embedding=embedding, top_k=15)),
+        (
+            "semantic_retriever",
+            SemanticRetriever(
+                embedding=embedding,
+                persist_directory=config.GALLERY_CHROMA_PATH,
+                top_k=15,
+            ),
+        ),
     ]
 )
 pipeline.fit(GALLERY_EXAMPLES)

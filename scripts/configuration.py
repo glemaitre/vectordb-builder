@@ -23,6 +23,11 @@ GALLERY_EXAMPLES_PATH = "../reference_packages/scikit-learn/examples"
 # Path to cache the embedding and models
 CACHE_PATH = "../models"
 
+# Path to the chroma database for each semantic retriever
+API_CHROMA_PATH = "../models/api_semantic_retrieval.chroma"
+USER_GUIDE_CHROMA_PATH = "../models/user_guide_semantic_retrieval.chroma"
+GALLERY_CHROMA_PATH = "../models/gallery_semantic_retrieval.chroma"
+
 # Path to store the retriever once trained
 API_SEMANTIC_RETRIEVER_PATH = "../models/api_semantic_retrieval.joblib"
 API_LEXICAL_RETRIEVER_PATH = "../models/api_lexical_retrieval.joblib"
