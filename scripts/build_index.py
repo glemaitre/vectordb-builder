@@ -27,10 +27,10 @@ logging.basicConfig(level=logging.INFO)
 # and then embed them using a sentence transformer.
 
 # %%
-from ragger_duck.embedding import SentenceTransformer
-from ragger_duck.retrieval import SemanticRetriever
-from ragger_duck.scraping import APINumPyDocExtractor
 from sklearn.pipeline import Pipeline
+from vectordb_builder.embedding import SentenceTransformer
+from vectordb_builder.ranker import SemanticRetriever
+from vectordb_builder.scraping.sklearn import APINumPyDocExtractor
 
 embedding = SentenceTransformer(
     model_name_or_path=config.SENTENCE_TRANSFORMER_MODEL,
@@ -41,7 +41,12 @@ api_scraper = APINumPyDocExtractor()
 pipeline = Pipeline(
     steps=[
         ("extractor", api_scraper),
-        ("semantic_retriever", SemanticRetriever(embedding=embedding, top_k=15)),
+        (
+            "semantic_retriever",
+            SemanticRetriever(
+                embedding=embedding, persist_directory=config.API_CHROMA_PATH, top_k=15
+            ),
+        ),
     ]
 )
 pipeline.fit(API_DOC)
@@ -60,8 +65,8 @@ joblib.dump(
 # sure that the keywords are present in the chunk.
 
 # %%
-from ragger_duck.retrieval import BM25Retriever
 from sklearn.feature_extraction.text import CountVectorizer
+from vectordb_builder.ranker import BM25Retriever
 
 count_vectorizer = CountVectorizer(ngram_range=(1, 5))
 pipeline = Pipeline(
@@ -84,7 +89,7 @@ joblib.dump(
 )
 
 # %%
-from ragger_duck.scraping import UserGuideDocExtractor
+from vectordb_builder.scraping.sklearn import UserGuideDocExtractor
 
 embedding = SentenceTransformer(
     model_name_or_path=config.SENTENCE_TRANSFORMER_MODEL,
@@ -100,7 +105,14 @@ user_guide_scraper = UserGuideDocExtractor(
 pipeline = Pipeline(
     steps=[
         ("extractor", user_guide_scraper),
-        ("semantic_retriever", SemanticRetriever(embedding=embedding, top_k=15)),
+        (
+            "semantic_retriever",
+            SemanticRetriever(
+                embedding=embedding,
+                persist_directory=config.USER_GUIDE_CHROMA_PATH,
+                top_k=15,
+            ),
+        ),
     ]
 )
 pipeline.fit(USER_GUIDE_DOC)
@@ -113,8 +125,8 @@ joblib.dump(
 )
 
 # %%
-from ragger_duck.retrieval import BM25Retriever
 from sklearn.feature_extraction.text import CountVectorizer
+from vectordb_builder.ranker import BM25Retriever
 
 count_vectorizer = CountVectorizer(ngram_range=(1, 5))
 user_guide_scraper = UserGuideDocExtractor(
@@ -140,7 +152,7 @@ joblib.dump(
 )
 
 # %%
-from ragger_duck.scraping import GalleryExampleExtractor
+from vectordb_builder.scraping.sklearn import GalleryExampleExtractor
 
 embedding = SentenceTransformer(
     model_name_or_path=config.SENTENCE_TRANSFORMER_MODEL,
@@ -153,7 +165,14 @@ gallery_scraper = GalleryExampleExtractor(
 pipeline = Pipeline(
     steps=[
         ("extractor", gallery_scraper),
-        ("semantic_retriever", SemanticRetriever(embedding=embedding, top_k=15)),
+        (
+            "semantic_retriever",
+            SemanticRetriever(
+                embedding=embedding,
+                persist_directory=config.GALLERY_CHROMA_PATH,
+                top_k=15,
+            ),
+        ),
     ]
 )
 pipeline.fit(GALLERY_EXAMPLES)
