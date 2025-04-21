@@ -76,3 +76,4 @@ index_data/
 *.egg-info
 scratch/
 src/vectordb_builder/embedding/tests/data/
+models/
