@@ -1,5 +1,5 @@
 from numbers import Integral, Real
-from typing import Any, Optional, Union, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Optional, Union
 
 from sklearn.base import BaseEstimator, _fit_context
 from sklearn.utils import Tags
@@ -7,6 +7,7 @@ from sklearn.utils._param_validation import HasMethods, Interval
 
 if TYPE_CHECKING:
     from vectordb_builder.ranker import BM25Retriever, SemanticRetriever
+
 
 class RetrieverReranker(BaseEstimator):
     """Hybrid retriever (lexical and semantic) followed by a cross-encoder reranker.

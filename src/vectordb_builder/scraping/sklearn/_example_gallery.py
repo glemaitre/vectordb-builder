@@ -14,7 +14,6 @@ from sklearn.utils import Tags
 from sklearn.utils._param_validation import Interval
 from sphinx_gallery.py_source_parser import split_code_and_text_blocks
 
-
 from vectordb_builder.scraping.sklearn._shared import _chunk_document
 
 SKLEARN_EXAMPLES_URL = "https://scikit-learn.org/stable/auto_examples/"

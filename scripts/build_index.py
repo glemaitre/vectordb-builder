@@ -27,11 +27,10 @@ logging.basicConfig(level=logging.INFO)
 # and then embed them using a sentence transformer.
 
 # %%
-from sklearn.pipeline import Pipeline
-
 from ragger_duck.embedding import SentenceTransformer
 from ragger_duck.retrieval import SemanticRetriever
 from ragger_duck.scraping import APINumPyDocExtractor
+from sklearn.pipeline import Pipeline
 
 embedding = SentenceTransformer(
     model_name_or_path=config.SENTENCE_TRANSFORMER_MODEL,
@@ -61,9 +60,8 @@ joblib.dump(
 # sure that the keywords are present in the chunk.
 
 # %%
-from sklearn.feature_extraction.text import CountVectorizer
-
 from ragger_duck.retrieval import BM25Retriever
+from sklearn.feature_extraction.text import CountVectorizer
 
 count_vectorizer = CountVectorizer(ngram_range=(1, 5))
 pipeline = Pipeline(
@@ -115,9 +113,8 @@ joblib.dump(
 )
 
 # %%
-from sklearn.feature_extraction.text import CountVectorizer
-
 from ragger_duck.retrieval import BM25Retriever
+from sklearn.feature_extraction.text import CountVectorizer
 
 count_vectorizer = CountVectorizer(ngram_range=(1, 5))
 user_guide_scraper = UserGuideDocExtractor(

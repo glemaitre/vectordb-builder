@@ -28,7 +28,6 @@ logging.basicConfig(level=logging.INFO)
 
 # %%
 from sklearn.pipeline import Pipeline
-
 from vectordb_builder.embedding import SentenceTransformer
 from vectordb_builder.ranker import SemanticRetriever
 from vectordb_builder.scraping.sklearn import APINumPyDocExtractor
@@ -67,7 +66,6 @@ joblib.dump(
 
 # %%
 from sklearn.feature_extraction.text import CountVectorizer
-
 from vectordb_builder.ranker import BM25Retriever
 
 count_vectorizer = CountVectorizer(ngram_range=(1, 5))
@@ -128,7 +126,6 @@ joblib.dump(
 
 # %%
 from sklearn.feature_extraction.text import CountVectorizer
-
 from vectordb_builder.ranker import BM25Retriever
 
 count_vectorizer = CountVectorizer(ngram_range=(1, 5))

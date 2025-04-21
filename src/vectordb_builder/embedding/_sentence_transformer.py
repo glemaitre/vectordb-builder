@@ -8,7 +8,6 @@ from sentence_transformers import SentenceTransformer as SentenceTransformerBase
 from sklearn.base import BaseEstimator, TransformerMixin, _fit_context
 from torch import nn
 
-
 logger = logging.getLogger(__name__)
 
 

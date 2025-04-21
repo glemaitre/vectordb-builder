@@ -1,5 +1,7 @@
 # Path to the HTML API documentation
-API_DOC_PATH = "../reference_packages/scikit-learn/doc/_build/html/stable/modules/generated"
+API_DOC_PATH = (
+    "../reference_packages/scikit-learn/doc/_build/html/stable/modules/generated"
+)
 # Path to the HTML User Guide documentation
 USER_GUIDE_DOC_PATH = "../reference_packages/scikit-learn/doc/_build/html/stable"
 USER_GUIDE_EXCLUDE_FOLDERS = [
@@ -41,4 +43,7 @@ CHUNK_SIZE = 700
 CHUNK_OVERLAP = 10
 
 # Sentence transformer model
-SENTENCE_TRANSFORMER_MODEL = "thenlper/gte-large"
+# We should look at the following available models:
+# https://huggingface.co/spaces/mteb/leaderboard
+# SENTENCE_TRANSFORMER_MODEL = "thenlper/gte-large"
+SENTENCE_TRANSFORMER_MODEL = "sentence-transformers/paraphrase-albert-small-v2"

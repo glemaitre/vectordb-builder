@@ -16,7 +16,6 @@ from sklearn.utils._param_validation import Interval
 
 from vectordb_builder.scraping.sklearn._shared import _chunk_document
 
-
 SKLEARN_USER_GUIDE_URL = "https://scikit-learn.org/stable/"
 logger = logging.getLogger(__name__)
 
